@@ -1,4 +1,8 @@
 import random
+from colorama import Fore, Style, init
+
+# Initialize colorama
+init(autoreset=True)
 
 
 class Map:
@@ -27,5 +31,16 @@ class Map:
         ]
 
     def display(self):
+        color_map = {
+            "~": Fore.BLUE,
+            ".": Fore.GREEN,
+            "F": Fore.LIGHTGREEN_EX,
+            "^": Fore.WHITE
+        }
+
         for row in self.grid:
-            print(" ".join(row))
+            colored_row = [
+                color_map.get(tile, Fore.RESET) + tile + Style.RESET_ALL
+                for tile in row
+            ]
+            print(" ".join(colored_row))
