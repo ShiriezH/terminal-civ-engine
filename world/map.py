@@ -65,9 +65,29 @@ class Map:
             neighbors = self.get_neighbors(x, y)
 
             for neighbor in neighbors:
-                if neighbor.owner is None and neighbor.symbol != "~":
+                # Skip water
+                if neighbor.symbol == "~":
+                    continue
+
+                # Empty tile → claim
+                if neighbor.owner is None:
                     faction.add_tile(neighbor)
-                    return  # Expand only one tile per turn
+                    return
+
+                # Enemy tile → battle
+                if neighbor.owner != faction:
+                    self.resolve_combat(faction, neighbor.owner, neighbor)
+                    return
+
+    def resolve_combat(self, attacker, defender, tile):
+        """Simple combat resolution between two factions."""
+        attacker_power = len(attacker.tiles) + random.randint(0, 3)
+        defender_power = len(defender.tiles) + random.randint(0, 3)
+
+        if attacker_power > defender_power:
+            defender.tiles.remove(tile)
+            attacker.add_tile(tile)
+        # else defender keeps tile
 
     def find_tile_position(self, target_tile):
         for i in range(self.height):
