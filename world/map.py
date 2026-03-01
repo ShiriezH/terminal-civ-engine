@@ -1,5 +1,5 @@
 import random
-from colorama import Fore, Style, init
+from colorama import Style, init
 from world.tile import Tile
 from entities.faction import Faction
 
@@ -51,6 +51,41 @@ class Map:
                 if tile.owner is None and tile.symbol != "~":
                     faction.add_tile(tile)
                     break
+
+    def simulate_turn(self):
+        """Simulate one turn of the world."""
+        for faction in self.factions:
+            faction.collect_resources()
+            self.expand_territory(faction)
+
+    def expand_territory(self, faction):
+        """Attempt to expand faction territory by claiming adjacent tiles."""
+        for tile in list(faction.tiles):
+            x, y = self.find_tile_position(tile)
+            neighbors = self.get_neighbors(x, y)
+
+            for neighbor in neighbors:
+                if neighbor.owner is None and neighbor.symbol != "~":
+                    faction.add_tile(neighbor)
+                    return  # Expand only one tile per turn
+
+    def find_tile_position(self, target_tile):
+        for i in range(self.height):
+            for j in range(self.width):
+                if self.grid[i][j] == target_tile:
+                    return i, j
+        return None, None
+
+    def get_neighbors(self, x, y):
+        neighbors = []
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+        for dx, dy in directions:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < self.height and 0 <= ny < self.width:
+                neighbors.append(self.grid[nx][ny])
+
+        return neighbors
 
     def display(self):
         for row in self.grid:
