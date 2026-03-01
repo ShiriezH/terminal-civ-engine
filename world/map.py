@@ -1,5 +1,6 @@
 import random
 from colorama import Fore, Style, init
+from world.tile import Tile
 
 # Initialize colorama
 init(autoreset=True)
@@ -26,21 +27,14 @@ class Map:
             terrain_list.extend([symbol] * int(weight * 100))
 
         self.grid = [
-            [random.choice(terrain_list) for _ in range(self.width)]
+            [Tile(random.choice(terrain_list)) for _ in range(self.width)]
             for _ in range(self.height)
         ]
 
     def display(self):
-        color_map = {
-            "~": Fore.BLUE,
-            ".": Fore.GREEN,
-            "F": Fore.LIGHTGREEN_EX,
-            "^": Fore.WHITE
-        }
-
         for row in self.grid:
             colored_row = [
-                color_map.get(tile, Fore.RESET) + tile + Style.RESET_ALL
+                tile.get_color() + tile.symbol + Style.RESET_ALL
                 for tile in row
             ]
             print(" ".join(colored_row))
