@@ -1,4 +1,4 @@
-🏛 Terminal Civilization Engine
+# 🏛 Terminal Civilization Engine
 
 A modular, turn-based civilization simulation engine built in Python.
 The engine procedurally generates a world map, spawns AI-controlled factions, and simulates territorial expansion, resource accumulation, and combat until a single faction achieves total dominance.
