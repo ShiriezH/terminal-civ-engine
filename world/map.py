@@ -65,16 +65,13 @@ class Map:
             neighbors = self.get_neighbors(x, y)
 
             for neighbor in neighbors:
-                # Skip water
                 if neighbor.symbol == "~":
                     continue
 
-                # Empty tile → claim
                 if neighbor.owner is None:
                     faction.add_tile(neighbor)
                     return
 
-                # Enemy tile → battle
                 if neighbor.owner != faction:
                     self.resolve_combat(faction, neighbor.owner, neighbor)
                     return
@@ -87,7 +84,6 @@ class Map:
         if attacker_power > defender_power:
             defender.tiles.remove(tile)
             attacker.add_tile(tile)
-        # else defender keeps tile
 
     def find_tile_position(self, target_tile):
         for i in range(self.height):
@@ -118,3 +114,27 @@ class Map:
                         tile.get_color() + tile.symbol + Style.RESET_ALL
                     )
             print(" ".join(row_display))
+
+    def check_victory(self):
+        """Check if one faction controls all non-water tiles."""
+        total_land_tiles = sum(
+            1
+            for row in self.grid
+            for tile in row
+            if tile.symbol != "~"
+        )
+
+        for faction in self.factions:
+            if len(faction.tiles) == total_land_tiles:
+                return faction
+
+        return None
+
+    def print_statistics(self):
+        print("\n--- Faction Statistics ---")
+        for faction in self.factions:
+            print(
+                f"{faction.name} ({faction.symbol}) | "
+                f"Tiles: {len(faction.tiles)} | "
+                f"Resources: {faction.resources}"
+            )
